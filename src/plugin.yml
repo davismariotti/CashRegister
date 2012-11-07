@@ -1,0 +1,7 @@
+name: CashRegister
+main: me.gomeow.CashRegister.CashRegister
+version: 1.0
+description: Cash
+commands:
+  order:
+    description: All commands
