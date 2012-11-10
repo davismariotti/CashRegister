@@ -27,7 +27,7 @@ public class CashRegister extends JavaPlugin {
 				chars[i] = Character.toUpperCase(chars[i]);
 				found = true;
 			} else if (Character.isWhitespace(chars[i]) || chars[i] == '.'
-					|| chars[i] == '_') { // You can add other chars here
+					|| chars[i] == '_') {
 				found = false;
 			}
 		}
@@ -51,24 +51,18 @@ public class CashRegister extends JavaPlugin {
 			}
 
 		} catch (NumberFormatException nfe) {
-			for (Material material : Material.values()) {
+			Material[] materials = Material.values();
+			for (Material material : materials) {
 				if (material.name().equals(input.toUpperCase())) {
 					String materialname = cap(material.toString());
-					if (materialname != null) {
-						return materialname.replaceAll("_", "");
-					} else {
-						throw new IllegalArgumentException("Unknown Name!");
-					}
-				} else if (material.name().replaceAll("_", "")
-						.equals(input.toUpperCase())) {
+					return materialname.replaceAll("_", "");
+				} else if (material.name().replaceAll("_", "").equals(input.toUpperCase())) {
 					String materialname = cap(material.toString());
-					if (materialname != null) {
-						return materialname.replaceAll("_", "");
-					} else {
-						throw new IllegalArgumentException("Unknown Name!");
-					}
-				} else
+					return materialname.replaceAll("_", "");
+				} else if(material == materials[materials.length - 1]) {
 					throw new IllegalArgumentException("Unknown Name!");
+				}
+				
 			}
 		}
 		return input;
@@ -81,35 +75,25 @@ public class CashRegister extends JavaPlugin {
 		if (label.equalsIgnoreCase("order")) {
 			if (args.length == 0) {
 				sender.sendMessage(ChatColor.YELLOW + "Commands:");
-				sender.sendMessage(ChatColor.YELLOW
-						+ "/order add <block> <amount> - Adds an amount of an item to the total.");
-				sender.sendMessage(ChatColor.YELLOW
-						+ "/order subtract <block> <amount> - Subtracts an amount of an item from the total.");
-				sender.sendMessage(ChatColor.YELLOW
-						+ "/order set <block> <amount> - Sets the amount of an item in the total.");
-				sender.sendMessage(ChatColor.YELLOW
-						+ "/order remove <block> - Removes an item in the total.");
-				sender.sendMessage(ChatColor.YELLOW
-						+ "/order total - Shows the total.");
-				sender.sendMessage(ChatColor.YELLOW
-						+ "/order finish - Clears the total.");
+				sender.sendMessage(ChatColor.YELLOW + "/order add <block> <amount> - Adds an amount of an item to the total.");
+				sender.sendMessage(ChatColor.YELLOW + "/order subtract <block> <amount> - Subtracts an amount of an item from the total.");
+				sender.sendMessage(ChatColor.YELLOW + "/order set <block> <amount> - Sets the amount of an item in the total.");
+				sender.sendMessage(ChatColor.YELLOW + "/order remove <block> - Removes an item in the total.");
+				sender.sendMessage(ChatColor.YELLOW + "/order total - Shows the total.");
+				sender.sendMessage(ChatColor.YELLOW + "/order finish - Clears the total.");
 			}
 			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("add")) {
-					sender.sendMessage(ChatColor.RED
-							+ "Usage: /order add <block> <amount>");
+					sender.sendMessage(ChatColor.RED + "Usage: /order add <block> <amount>");
 				}
 				if (args[0].equalsIgnoreCase("subtract")) {
-					sender.sendMessage(ChatColor.RED
-							+ "Usage: /order subtract <block> <amount>");
+					sender.sendMessage(ChatColor.RED + "Usage: /order subtract <block> <amount>");
 				}
 				if (args[0].equalsIgnoreCase("set")) {
-					sender.sendMessage(ChatColor.RED
-							+ "Usage: /order set <block> <amount>");
+					sender.sendMessage(ChatColor.RED + "Usage: /order set <block> <amount>");
 				}
 				if (args[0].equalsIgnoreCase("remove")) {
-					sender.sendMessage(ChatColor.RED
-							+ "Usage: /order remove <block>");
+					sender.sendMessage(ChatColor.RED + "Usage: /order remove <block>");
 				}
 				/*
 				 * if(args[0].equalsIgnoreCase("helpme")) {
@@ -124,22 +108,16 @@ public class CashRegister extends JavaPlugin {
 				else if (args[0].equalsIgnoreCase("total")) {
 					String listname = sender.getName();
 					if (!register.containsKey(sender.getName())) {
-						sender.sendMessage(ChatColor.RED
-								+ "You do not have anything in your total!");
+						sender.sendMessage(ChatColor.RED + "You do not have anything in your total!");
 					} else {
-						ArrayList<String> itemsinregister = register
-								.get(listname);
-						String moneysign = this.getConfig().getString(
-								"Money-Sign");
+						ArrayList<String> itemsinregister = register.get(listname);
+						String moneysign = this.getConfig().getString("Money-Sign");
 
 						double total = 0;
 
 						for (String priceadd : itemsinregister) {
 							String[] eachsplit = priceadd.split("@");
-							total = total
-									+ this.getConfig().getDouble(
-											"Prices." + eachsplit[0])
-									* Double.parseDouble(eachsplit[1]);
+							total = total + this.getConfig().getDouble("Prices." + eachsplit[0]) * Double.parseDouble(eachsplit[1]);
 
 						}
 
@@ -147,25 +125,19 @@ public class CashRegister extends JavaPlugin {
 						total = Math.round(total);
 						total = total / 100;
 
-						sender.sendMessage(ChatColor.GOLD + "In the order is: "
-								+ moneysign + Double.toString(total));
+						sender.sendMessage(ChatColor.GOLD + "In the order is: " + moneysign + Double.toString(total));
 						for (String each : itemsinregister) {
 							String[] eachsplit = each.split("@");
 							double splittotal = 0;
 							splittotal = splittotal
-									+ this.getConfig()
-											.getDouble(
-													"Prices."
-															+ findMaterial(eachsplit[0]));
-							splittotal = splittotal
-									* Double.parseDouble(eachsplit[1]);
+									+ this.getConfig().getDouble("Prices." + findMaterial(eachsplit[0]));
+							splittotal = splittotal * Double.parseDouble(eachsplit[1]);
 							splittotal = splittotal * 100;
 							splittotal = Math.round(splittotal);
 							splittotal = splittotal / 100;
 
-							sender.sendMessage(ChatColor.GOLD + moneysign
-									+ Double.toString(splittotal) + " - "
-									+ eachsplit[1] + " " + eachsplit[0]);
+							sender.sendMessage(ChatColor.GOLD + moneysign + Double.toString(splittotal) 
+									+ " - " + eachsplit[1] + " " + eachsplit[0]);
 						}
 					}
 				} else if (args[0].equalsIgnoreCase("finish")) {
@@ -173,32 +145,26 @@ public class CashRegister extends JavaPlugin {
 						register.remove(sender.getName());
 						sender.sendMessage(ChatColor.GREEN + "Order finished!");
 					} else {
-						sender.sendMessage(ChatColor.RED
-								+ "You had no order to begin with!");
+						sender.sendMessage(ChatColor.RED + "You had no order to begin with!");
 					}
 				} else {
-					sender.sendMessage(ChatColor.RED
-							+ "Please type /order to get the available commands!");
+					sender.sendMessage(ChatColor.RED + "Please type /order to get the available commands!");
 				}
 			}
 			if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("add")) {
-					sender.sendMessage(ChatColor.RED
-							+ "Usage: /order add <block> <amount>");
+					sender.sendMessage(ChatColor.RED + "Usage: /order add <block> <amount>");
 				}
 				if (args[0].equalsIgnoreCase("subtract")) {
-					sender.sendMessage(ChatColor.RED
-							+ "Usage: /order subtract <block> <amount>");
+					sender.sendMessage(ChatColor.RED + "Usage: /order subtract <block> <amount>");
 				}
 				if (args[0].equalsIgnoreCase("set")) {
-					sender.sendMessage(ChatColor.RED
-							+ "Usage: /order set <block> <amount>");
+					sender.sendMessage(ChatColor.RED + "Usage: /order set <block> <amount>");
 				}
 				if (args[0].equalsIgnoreCase("remove")) {
 					String block = cap(args[1]);
 					if (register.containsKey(sender.getName())) {
-						ArrayList<String> removelist = register.get(sender
-								.getName());
+						ArrayList<String> removelist = register.get(sender.getName());
 						for (String removeitem : removelist) {
 							if (removeitem.startsWith(block)) {
 								removelist.remove(removeitem);
@@ -206,35 +172,27 @@ public class CashRegister extends JavaPlugin {
 								register.remove(name);
 								register.put(name, removelist);
 
-								sender.sendMessage(ChatColor.GREEN
-										+ "Removed all " + block
-										+ " from the total!");
+								sender.sendMessage(ChatColor.GREEN + "Removed all " + block + " from the total!");
 								break;
-							} else if (removeitem == removelist.get(removelist
-									.size() - 1)) {
-								sender.sendMessage(ChatColor.RED
-										+ "There was no " + block
-										+ " in the total!");
+							} else if (removeitem == removelist.get(removelist.size() - 1)) {
+								sender.sendMessage(ChatColor.RED + "There was no " + block + " in the total!");
 							}
 						}
 						if (removelist.isEmpty()) {
 							register.remove(name);
 						}
 					} else {
-						sender.sendMessage(ChatColor.RED
-								+ "You do not have anything in your total right now.");
+						sender.sendMessage(ChatColor.RED + "You do not have anything in your total right now.");
 					}
 				} else
-					sender.sendMessage(ChatColor.RED
-							+ "Please type /order to get the available commands!");
+					sender.sendMessage(ChatColor.RED + "Please type /order to get the available commands!");
 			}
 			if (args.length == 3) {
 				String block = null;
 				try {
 					block = findMaterial(args[1]);
 				} catch (IllegalArgumentException iae) {
-					sender.sendMessage(ChatColor.RED
-							+ "Please use a real block ID/Name!");
+					sender.sendMessage(ChatColor.RED + "Please use a real block ID/Name!");
 				}
 				// List<String> approveditems =
 				// this.getConfig().getStringList("Approved-Items");
@@ -244,69 +202,47 @@ public class CashRegister extends JavaPlugin {
 					try {
 						int intamt = Integer.parseInt(amt);
 						if (intamt == 0) {
-							sender.sendMessage(ChatColor.RED
-									+ "You can't add nothing to your total!");
+							sender.sendMessage(ChatColor.RED + "You can't add nothing to your total!");
 							return false;
 						}
 					} catch (NumberFormatException nfe) {
-						sender.sendMessage(ChatColor.RED
-								+ "The amount must be a number!");
-						sender.sendMessage(ChatColor.RED
-								+ "Usage: /order add <block> <amount>");
+						sender.sendMessage(ChatColor.RED + "The amount must be a number!");
+						sender.sendMessage(ChatColor.RED + "Usage: /order add <block> <amount>");
 						return false;
 					}
 					// Integer price = this.getConfig().getInt("Item." + block +
 					// ".Price");
 					int number = 5;
-					if (number != 5) {
-						return false;
-					} else {
+					if (number != 5) return false;
+					else {
 						if (register.containsKey(name)) {
 							ArrayList<String> registerlist = register.get(name);
 							for (String blockamt : registerlist) {
 								if (blockamt.startsWith(block)) {
-									String[] splitblockamt = blockamt
-											.split("@");
+									String[] splitblockamt = blockamt.split("@");
 
-									Integer splitamt = Integer
-											.parseInt(splitblockamt[1]);
+									Integer splitamt = Integer.parseInt(splitblockamt[1]);
 									splitamt = splitamt + Integer.parseInt(amt);
 									String splitamtstring = splitamt.toString();
 									// blockamt
 									register.remove(name);
-									String stringtoadd = block + "@"
-											+ splitamtstring;
-									Collections.replaceAll(registerlist,
-											blockamt, stringtoadd);
+									String stringtoadd = block + "@" + splitamtstring;
+									Collections.replaceAll(registerlist, blockamt, stringtoadd);
 									register.put(name, registerlist);
-									double price = this.getConfig().getDouble(
-											"Prices." + findMaterial(args[1]));
-									String moneysign = this.getConfig()
-											.getString("Money-Sign");
-									sender.sendMessage(ChatColor.GREEN
-											+ "Added " + amt + " " + block
-											+ " to the order! @ " + moneysign
-											+ Double.toString(price) + " each");
+									double price = this.getConfig().getDouble("Prices." + findMaterial(args[1]));
+									String moneysign = this.getConfig().getString("Money-Sign");
+									sender.sendMessage(ChatColor.GREEN + "Added " + amt + " " + block
+											+ " to the order! @ " + moneysign + Double.toString(price) + " each");
 									break;
 								} else {
-									if (blockamt == registerlist
-											.get(registerlist.size() - 1)) {
+									if (blockamt == registerlist.get(registerlist.size() - 1)) {
 										registerlist.add(block + "@" + amt);
 										register.remove(name);
 										register.put(name, registerlist);
-										double price = this
-												.getConfig()
-												.getDouble(
-														"Prices."
-																+ findMaterial(args[1]));
-										String moneysign = this.getConfig()
-												.getString("Money-Sign");
-										sender.sendMessage(ChatColor.GREEN
-												+ "Added " + amt + " " + block
-												+ " to the order! @ "
-												+ moneysign
-												+ Double.toString(price)
-												+ " each");
+										double price = this.getConfig().getDouble("Prices."+ findMaterial(args[1]));
+										String moneysign = this.getConfig().getString("Money-Sign");
+										sender.sendMessage(ChatColor.GREEN + "Added " + amt + " " + block + " to the order! @ "
+												+ moneysign + Double.toString(price) + " each");
 										break;
 									}
 								}
@@ -315,14 +251,10 @@ public class CashRegister extends JavaPlugin {
 							ArrayList<String> newregisterlist = new ArrayList<String>();
 							newregisterlist.add(block + "@" + amt);
 							register.put(name, newregisterlist);
-							double price = this.getConfig().getDouble(
-									"Prices." + findMaterial(args[1]));
-							String moneysign = this.getConfig().getString(
-									"Money-Sign");
-							sender.sendMessage(ChatColor.GREEN + "Added " + amt
-									+ " " + block + " to the order! @ "
-									+ moneysign + Double.toString(price)
-									+ " each");
+							double price = this.getConfig().getDouble("Prices." + findMaterial(args[1]));
+							String moneysign = this.getConfig().getString("Money-Sign");
+							sender.sendMessage(ChatColor.GREEN + "Added " + amt + " " + block 
+									+ " to the order! @ " + moneysign + Double.toString(price) + " each");
 						}
 					}
 				} else if (args[0].equalsIgnoreCase("set")) {
@@ -330,10 +262,8 @@ public class CashRegister extends JavaPlugin {
 					try {
 						Integer.parseInt(amt);
 					} catch (NumberFormatException nfe) {
-						sender.sendMessage(ChatColor.RED
-								+ "The amount must be a number!");
-						sender.sendMessage(ChatColor.RED
-								+ "Usage: /order set <block> <amount>");
+						sender.sendMessage(ChatColor.RED + "The amount must be a number!");
+						sender.sendMessage(ChatColor.RED + "Usage: /order set <block> <amount>");
 						return false;
 					}
 					if (register.containsKey(name)) {
@@ -347,18 +277,14 @@ public class CashRegister extends JavaPlugin {
 										register.remove(name);
 									}
 								} else {
-									Collections.replaceAll(registerlistset,
-											setamt, toadd);
+									Collections.replaceAll(registerlistset, setamt, toadd);
 								}
 								register.remove(name);
 								register.put(name, registerlistset);
 
-								sender.sendMessage(ChatColor.GREEN
-										+ "Set the amount of " + block + " to "
-										+ amt + "!");
+								sender.sendMessage(ChatColor.GREEN + "Set the amount of " + block + " to " + amt + "!");
 								break;
-							} else if (setamt == registerlistset
-									.get(registerlistset.size() - 1)) {
+							} else if (setamt == registerlistset.get(registerlistset.size() - 1)) {
 								if (Integer.parseInt(amt) == 0) {
 									registerlistset.remove(setamt);
 									if (registerlistset.isEmpty()) {
@@ -367,9 +293,7 @@ public class CashRegister extends JavaPlugin {
 								} else {
 									registerlistset.add(block + "@" + amt);
 								}
-								sender.sendMessage(ChatColor.GREEN
-										+ "Set the amount of " + block + " to "
-										+ amt + "!");
+								sender.sendMessage(ChatColor.GREEN + "Set the amount of " + block + " to " + amt + "!");
 								break;
 							}
 						}
@@ -381,13 +305,9 @@ public class CashRegister extends JavaPlugin {
 							ArrayList<String> newregisterlistset = new ArrayList<String>();
 							newregisterlistset.add(block + "@" + amt);
 							register.put(name, newregisterlistset);
-							sender.sendMessage(ChatColor.GREEN
-									+ "Set the amount of " + block + " to "
-									+ amt + "!");
+							sender.sendMessage(ChatColor.GREEN + "Set the amount of " + block + " to " + amt + "!");
 						} else {
-							sender.sendMessage(ChatColor.GREEN
-									+ "Set the amount of " + block + " to "
-									+ amt + "!");
+							sender.sendMessage(ChatColor.GREEN + "Set the amount of " + block + " to " + amt + "!");
 						}
 					}
 				}
@@ -397,15 +317,12 @@ public class CashRegister extends JavaPlugin {
 					try {
 						Integer.parseInt(amt);
 					} catch (NumberFormatException nfe) {
-						sender.sendMessage(ChatColor.RED
-								+ "The amount must be a number!");
-						sender.sendMessage(ChatColor.RED
-								+ "Usage: /order subtract <block> <amount>");
+						sender.sendMessage(ChatColor.RED + "The amount must be a number!");
+						sender.sendMessage(ChatColor.RED + "Usage: /order subtract <block> <amount>");
 						return false;
 					}
 					if (register.containsKey(name)) {
-						ArrayList<String> subtractregisterlist = register
-								.get(name);
+						ArrayList<String> subtractregisterlist = register.get(name);
 						for (String subtractitem : subtractregisterlist) {
 							if (subtractitem.startsWith(block)) {
 								String[] splitsub = subtractitem.split("@");
@@ -416,35 +333,27 @@ public class CashRegister extends JavaPlugin {
 								subtractregisterlist.remove(subtractitem);
 
 								if (itemamt != 0) {
-									subtractregisterlist.add(block + "@"
-											+ itemamt);
+									subtractregisterlist.add(block + "@" + itemamt);
 								}
 
 								register.remove(name);
 								register.put(name, subtractregisterlist);
 
-								sender.sendMessage(ChatColor.GREEN + "Removed "
-										+ args[2] + " " + block
-										+ " from the order!");
+								sender.sendMessage(ChatColor.GREEN + "Removed " + args[2] + " " + block + " from the order!");
 
 								break;
-							} else if (subtractitem == subtractregisterlist
-									.get(subtractregisterlist.size() - 1)) {
-								sender.sendMessage(ChatColor.RED
-										+ "You do not have any of that item in your total!");
+							} else if (subtractitem == subtractregisterlist.get(subtractregisterlist.size() - 1)) {
+								sender.sendMessage(ChatColor.RED + "You do not have any of that item in your total!");
 							}
 						}
 					} else {
-						sender.sendMessage(ChatColor.RED
-								+ "You do not have anything in your total right now.");
+						sender.sendMessage(ChatColor.RED + "You do not have anything in your total right now.");
 					}
 				} else
-					sender.sendMessage(ChatColor.RED
-							+ "Please type /order to get the available commands!");
+					sender.sendMessage(ChatColor.RED + "Please type /order to get the available commands!");
 			} else {
 				if (args.length >= 4) {
-					sender.sendMessage(ChatColor.RED
-							+ "Please type /order to get the available commands!");
+					sender.sendMessage(ChatColor.RED + "Please type /order to get the available commands!");
 				}
 			}
 
